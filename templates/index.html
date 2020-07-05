@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../static/js/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
+    <title>文件上传下载</title>
+</head>
+
+<body>
+    <p>文件上传下载</p>
+    <p>用户名：{{current_user.nickname}}</p>
+    <p><a href="/logout">退出登录</a></p>
+    <form accept-charset="UTF-8" enctype="multipart/form-data" id="uploadform">
+        <input type="file" name="file" id="file">
+        <input type="button" value="上传" onclick="upload()"></form>
+    <hr>
+    <ol id="filelist"></ol>
+    <script>
+        function upload() {
+            var formdata = new FormData($("#uploadform")[0]);
+            $.ajax({
+                url: "/upload",
+                type: "POST",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    toastr["success"](data);
+                    get_list()
+                },
+                error: function () {
+                    toastr["error"]("网络连接失败");
+                }
+            });
+        }
+        function get_list() {
+            $("#filelist").empty();
+            $.ajax({
+                url: "/get_list",
+                type: "get",
+                success: function (result) {
+                    $.each(result, function (index) {
+                        $("#filelist").append(result[index]).append('<br>')
+                    })
+                },
+            })
+        }
+        function delete_file(e) {
+            var filename = e.target.id;
+            $.ajax({
+                url: "/delete/" + filename,
+                type: "get",
+                success: function (result) {
+                    if (result.result == "OK") {
+                        toastr["success"]("删除成功")
+                        get_list()
+                    } else if (result.result == "NO") {
+                        toastr["error"](result.msg)
+                    }
+                },
+                error: function () {
+                    toastr["error"]("网络连接失败")
+                }
+            })
+        }
+        get_list()
+    </script>
+</body>
+
+</html>
