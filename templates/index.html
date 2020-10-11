@@ -23,6 +23,7 @@
     <script>
         function upload() {
             var formdata = new FormData($("#uploadform")[0]);
+            console.log(formdata)
             $.ajax({
                 url: "/upload",
                 type: "POST",
@@ -45,6 +46,7 @@
                 url: "/get_list",
                 type: "get",
                 success: function (result) {
+                    console.log(result);
                     $.each(result, function (index) {
                         $("#filelist").append(result[index]).append('<br>')
                     })

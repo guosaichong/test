@@ -89,11 +89,11 @@ def register():
         user = User.query.filter_by(username=username).first()
         print(user)
         if not user:
-            random_floder = random.randint(0, 10000)
-            while random_floder in os.listdir(download_floder):
-                random_floder = random.randint(0, 10000)
+            # random_floder = random.randint(0, 10000)
+            # while random_floder in os.listdir(download_floder):
+            #     random_floder = random.randint(0, 10000)
             user = User(username=username, nickname=nickname,
-                        floder=str(random_floder))
+                        floder=username)
             user.hash_password(password)
             os.mkdir(os.path.join(download_floder, user.floder))
             db.session.add(user)
